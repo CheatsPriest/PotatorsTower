@@ -1,0 +1,8 @@
+Dockerfile
+.dockerignore
+
+out/
+build/
+
+*.md
+.gitignore

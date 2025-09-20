@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+enum ServerStatus {
+    DOWN = 0;
+    UP = 1;
+    UNSTABLE = 2;
+}
+
+message ServerInfo {
+    string endpoint = 1;
+    ServerStatus status = 2;
+    google.protobuf.Timestamp time = 3;
+}
+
+message Endpoint {
+    string endpoint = 1;
+}
+
+message Response {}
+
+service ServerChecker {
+    rpc GetServerInfo(stream Endpoint) returns (stream ServerInfo);
+    rpc NotifyClientsAboutFall(stream Endpoint) returns (Response);
+}
