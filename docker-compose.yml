@@ -36,6 +36,22 @@ services:
     networks:
       - app-network
 
+  client-handler:
+    build: ./ClientHandlerService
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=PingTowerBase
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=4230
+    ports:
+      - "80:8080"
+    networks:
+      - app-network
+
 volumes:
   postgres_data:
 

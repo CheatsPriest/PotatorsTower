@@ -24,7 +24,7 @@ CREATE TABLE users (
     chat_id BIGINT-- UNIQUE??
 );
 
-CREATE TABLE user_subscription (
+CREATE TABLE user_subscriptions (
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     site_id BIGINT NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, site_id)
@@ -55,8 +55,8 @@ CREATE INDEX idx_servers_status ON servers(status);
 CREATE INDEX idx_servers_endpoint ON servers(endpoint);
 CREATE INDEX idx_users_login ON users(login);
 CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_user_subscription_user_id ON user_subscription(user_id);
-CREATE INDEX idx_user_subscription_site_id ON user_subscription(site_id);
+CREATE INDEX idx_user_subscriptions_user_id ON user_subscriptions(user_id);
+CREATE INDEX idx_user_subscriptions_site_id ON user_subscriptions(site_id);
 CREATE INDEX idx_down_servers_server_id ON down_servers(server_id);
 CREATE INDEX idx_logs_server_id ON logs(server_id);
 CREATE INDEX idx_logs_date_time ON logs(date_time);

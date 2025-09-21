@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero-section">
+    <h2>Детектор сбоев</h2>
+    <p>Онлайн-система мониторинга сбоев и доступности сайтов и приложений</p>
+
+    <div class="search-container">
+        <form method="post" action=""  class="search-form" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="search-group">
+                {{ form.site(class="search-input", placeholder="Введите ссылку на сайт...") }}
+                <button type="submit" class="search-btn">
+                    <span class="search-icon">🔍</span>
+                    Искать
+                </button>
+            </div>
+            {% for error in form.site.errors %}
+            <span class="error-message">{{ error }}</span>
+            {% endfor %}
+        </form>
+    </div>
+</section>
+
+<section class="services-grid">
+    <div class="service-card" onclick="monitoring()">
+        <div class="service-image">📊</div>
+        <h3>Мониторинг сайтов</h3>
+        <p>Круглосуточный мониторинг доступности ваших веб-ресурсов</p>
+    </div>
+
+    <!--<div class="service-card">
+        <div class="service-image">📊</div>
+        <h3>Аналитика производительности</h3>
+        <p>Детальная статистика и аналитика времени ответа</p>
+    </div> -->
+</section>
+
+<script>
+    function monitoring() {
+        window.location.href = '/monitoring';
+    }
+</script>
+
+<style>
+    .hero-section {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .hero-section h2 {
+        font-size: 2.2em;
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+
+    .hero-section p {
+        font-size: 1.2em;
+        color: #666;
+        max-width: 800px;
+        margin: 0 auto 30px;
+    }
+
+    .search-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .search-form {
+        width: 100%;
+    }
+
+    .search-group {
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid #ddd;
+        border-radius: 50px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .search-group:focus-within {
+        border-color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 15px 20px;
+        border: none;
+        outline: none;
+        font-size: 1.1em;
+        background: transparent;
+    }
+
+    .search-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .search-btn:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        transform: translateX(2px);
+    }
+
+    .search-icon {
+        font-size: 1.2em;
+    }
+
+    .error-message {
+        color: #ff6b6b;
+        font-size: 0.9em;
+        margin-top: 8px;
+        display: block;
+        text-align: center;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .service-image {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2em;
+    }
+
+    .service-card h3 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+    }
+
+    .service-card p {
+        color: #666;
+        line-height: 1.5;
+    }
+
+
+</style>
+{% endblock %}
