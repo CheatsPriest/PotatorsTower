@@ -139,8 +139,9 @@ class HTTPForm(FlaskForm):
 
 class PriorityForm(FlaskForm):
     pri = SelectField('Adjust priority', choices=[(4,'extreme'),(3,'high'),(2,'medium'),(1,'low')])
-    pris = SubmitField('')
+    pris = SubmitField('set')
     pris.data = False
+
 
 class SSLForm(FlaskForm):
     sll = SubmitField('skip SSL')
@@ -283,11 +284,12 @@ def sites(sitename):
     ca = c.fetchone()
     va = v.fetchone()
     ssl = ''
-    htp =''
+    htp = ''
     med = ''
     pth = ''
     ctn = ''
     ctn_type = ''
+    priority = ''
     pings = []
     time = []
     delay = []
@@ -299,19 +301,23 @@ def sites(sitename):
             form.sub.label.text = "Подписан"
         else:
             form.sub.label.text = "Не подписан"
-    
+
         c.execute(''' SELECT * FROM servers WHERE endpoint = %s LIMIT 1''', (sitename,))
         siteid = c.fetchone()
         time = []
         delay = []
-        c.execute(''' SELECT cheack_ssl, is_https, load_media, path, content, content_type FROM servers WHERE endpoint = %s LIMIT 1''', (sitename,))
-        a =c.fetchone()
+        c.execute(
+            ''' SELECT cheack_ssl, is_https, load_media, path, content, content_type,priority FROM servers WHERE endpoint = %s LIMIT 1''',
+            (sitename,))
+        a = c.fetchone()
         ssl = a[0]
         htp = a[1]
         med = a[2]
         pth = a[3]
         ctn = a[4]
         ctn_type = a[5]
+        dic = {1: 'low', 2: 'medium', 3: 'high', 4: 'extreme'}
+        priority = dic[a[6]]
         if (ssl):
             formssl.sll.label.text = "SSL used"
         else:
@@ -327,7 +333,8 @@ def sites(sitename):
         if siteid:
             c.execute(''' SELECT * FROM logs WHERE server_id = %s ORDER BY date_time DESC''', (siteid[0],))
         for row in c.fetchall():
-            pings.append({'status': row[3], 'response_time': row[4], 'timestamp': row[2], 'ans': row[5], "error":row[6]})
+            pings.append(
+                {'status': row[3], 'response_time': row[4], 'timestamp': row[2], 'ans': row[5], "error": row[6]})
 
             time.append(str(row[2]))
             delay.append(row[4])
@@ -335,34 +342,31 @@ def sites(sitename):
         delay.reverse()
         if request.method == 'POST':
             if formPri.pris.data:
+                print(formPri.pri.data[0])
                 c.execute("UPDATE servers SET priority = %s WHERE endpoint = %s", (formPri.pri.data[0], sitename))
-            if(formssl.sll.data):
+            if formssl.sll.data:
                 c.execute("UPDATE servers SET cheack_ssl = %s WHERE endpoint = %s", (not ssl, sitename))
-            if (formhtp.htt.data):
+            if formhtp.htt.data:
                 c.execute("UPDATE servers SET is_https = %s WHERE endpoint = %s", (not htp, sitename))
-            if (form.sub.data):
+            if form.sub.data:
                 add_sub(session['username'], sitename)
-            if (formmed.med.data):
+            if formmed.med.data:
                 c.execute("UPDATE servers SET load_media = %s WHERE endpoint = %s", (not med, sitename))
-            if (form2.add.data):
-                add_serv(sitename)
             if (form3.set.data):
-                print(form3.content.data)
-                c.execute("UPDATE servers SET content = %s WHERE endpoint = %s", (form3.content.data,sitename))
+                c.execute("UPDATE servers SET content = %s WHERE endpoint = %s", (form3.content.data, sitename))
             if (formpat.pat.data):
                 c.execute("UPDATE servers SET path = %s WHERE endpoint = %s", (formpat.path.data, sitename))
             if (form4.use.data):
                 print(form4.type.data)
-                c.execute("UPDATE servers SET content_type = %s WHERE endpoint = %s", (form4.type.data,sitename))
+                c.execute("UPDATE servers SET content_type = %s WHERE endpoint = %s", (form4.type.data, sitename))
             conn.commit()
             conn.close()
             return redirect('/site/' + sitename)
 
-    conn.commit()
-    conn.close()
-
-    return render_template('profile.html', pings=pings,ctn=ctn, pth=pth,ctn_type=ctn_type, formpat=formpat,formssl=formssl,formmed=formmed, formhtp=formhtp, form=form, time=time, delay=delay, form2=form2,
-                           sitename=sitename,form3=form3,form4=form4,formpri=formPri,
+    return render_template('profile.html', pings=pings, ctn=ctn, pth=pth, ctn_type=ctn_type, formpat=formpat,
+                           formssl=formssl, formmed=formmed, formhtp=formhtp, form=form, time=time, delay=delay,
+                           form2=form2,
+                           sitename=sitename, form3=form3, form4=form4, formpri=formPri, priority=priority,
                            user_authenticated=session.get('user_authenticated', False),
                            admin=session.get('admin', False))
 

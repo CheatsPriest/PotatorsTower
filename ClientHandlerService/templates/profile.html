@@ -31,17 +31,18 @@
         <div class="search-container">
             {{ formpri.hidden_tag() }}
             <form action="" class="search-form" method="post" novalidate>
+                <text> {{priority}}</text>
                 <div class="select">
                     {{ formpri.pri(class="select", placeholder="") }}
                     {{ formpri.pris(class="add-site-btn", placeholder="Сохранить")}}
                 </div>
-                {% for error in form3.content.errors %}
+                {% for error in formpri.pri.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </form>
-
+    </div>
  {% endif %}
-        </div>
+
     </div>
     <div class="monitoring-header">
         <div class="chart-container">
@@ -95,7 +96,7 @@
                 <th>Время ответа</th>
                 <th>Последняя проверка</th>
                 <th>Код</th>
-                <th>Ошибки</th>
+                <th>Вывод</th>
             </tr>
             </thead>
             <tbody>
@@ -133,10 +134,9 @@
         <div class="empty-icon">📡</div>
         <h3>Нет данных мониторинга</h3>
         <p>Добавьте сайты для начала мониторинга</p>
-        <form action="" class="login-form" method="post" novalidate>
-            {{form2.hidden_tag()}}
-            {{ form2.add(class="add-site-btn", placeholder="➕ Добавить сайт")}}
-        </form>
+         <button class="add-site-btn" onclick="location.href='{{ url_for('add') }}'">
+            ➕ Добавить сайт
+        </button>
     </div>
     {% endif %}
 </div>
