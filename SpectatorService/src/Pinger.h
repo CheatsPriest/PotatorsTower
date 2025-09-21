@@ -4,6 +4,7 @@
 #include <string>
 #include <system_error>
 #include "httplib.h"
+#include "MediaLoadTimer.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -50,6 +51,7 @@ struct request_params {
     int timeout_sec = 1;
     bool use_https = true;
     bool verify_ssl = true; // НОВОЕ: проверять ли SSL
+    bool load_media = false;
     std::string expected_content; // НОВОЕ: какой текст ищем в теле
     std::string expected_content_type; // НОВОЕ: какой Content-Type ожидаем
 };
@@ -118,7 +120,24 @@ private:
        
         res.delay = end - start;
 
+        
+
         return response;
+    }
+    void contentLoaderTimer(const request_params& params, result& res, auto& response) {
+        std::string url;
+        if (params.use_https) {
+            url = "https://" + params.domain+params.path;
+        }
+        else {
+            url = "http://" + params.domain + params.path;
+        }
+       
+        MediaLoadTimer timer(url);
+        
+        res.delay += timer.measure_total_load_time(response->body);
+       
+  
     }
     void cheackContent(const request_params& params, result& result, httplib::Result& response) {
         if (!params.expected_content.empty() &&
@@ -191,6 +210,7 @@ private:
                 res.status = pingStatus::ok;
                 res.http_status = response->status;
                 res.response_body = response->body;
+                if(params.load_media) contentLoaderTimer(params, res, response);
 
                 // 6. ДОПОЛНИТЕЛЬНЫЕ ПРОВЕРКИ ПО ТЗ
                 // Проверка контента (если задано)
@@ -263,6 +283,7 @@ private:
                 res.http_status = response->status;
                 res.response_body = response->body;
 
+                if (params.load_media) contentLoaderTimer(params, res, response);
                 // 6. ДОПОЛНИТЕЛЬНЫЕ ПРОВЕРКИ ПО ТЗ
                 // Проверка контента (если задано)
                 cheackContent(params, res, response);

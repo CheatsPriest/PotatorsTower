@@ -24,7 +24,7 @@ public:
 
 	}
 	void start() {
-
+		Controller::updates[priorityType] = true;
 
 		pqxx::result ans = ConnectionPool::connectionPool.request("select count(*) from servers");
 		tabbleSize = ans[0][0].as<size_t>();
@@ -36,14 +36,18 @@ public:
 
 		}
 
-
-
+		auto start = std::chrono::high_resolution_clock::now();
 		while (completed != numThreads);
 
 		for (int i = 0; i < pool.size(); i++) {
 			pool[i].join();
 		}
 		//std::cout << counter << std::endl;
+		auto end = std::chrono::high_resolution_clock::now();
+		ConsoleManager::console.sendMesseage("Last update priority " + std::to_string(priorityType) + ": " + std::to_string((end-start).count() / 1000000000.f) + " seconds.");
+		Controller::updates[priorityType] = false;
+		
+
 	}
 
 private:
@@ -54,7 +58,13 @@ private:
 
 		for (size_t i = start; i < end; i++) {
 			pqxx::result ans;
-			ans = ConnectionPool::connectionPool.request(requestAll, i);
+			if(priorityType!=allPriority){
+				ans = ConnectionPool::connectionPool.request(requestByType, (int)priorityType, i);
+			}
+			else {
+				ans = ConnectionPool::connectionPool.request(requestAll, i);
+			}
+			
 
 			
 			std::string domain = "";
@@ -62,6 +72,7 @@ private:
 			std::string prevState = "";
 			bool cheack_ssl = false;
 			bool is_https = false;
+			bool load_media = false;
 			std::string content;
 			std::string content_type;
 			std::string path = "/";
@@ -97,6 +108,13 @@ private:
 					is_https = row["is_https"].as<bool>();
 				}
 
+				if (row["load_media"].is_null()) {
+					load_media = false;
+				}
+				else {
+					load_media = row["load_media"].as<bool>();
+				}
+
 				if (row["content"].is_null()) {
 					content = "";
 				}
@@ -111,12 +129,12 @@ private:
 					content_type = row["content_type"].as<std::string>();
 				}
 
-				/*if (row["path"].is_null()) {
+				if (row["path"].is_null()) {
 					path = "/";
 				}
 				else {
 					path = row["path"].as<std::string>();
-				}*/
+				}
 
 
 			}
@@ -133,11 +151,13 @@ private:
 			request_params params;
 			params.use_https = is_https;
 			params.verify_ssl = cheack_ssl;
+			params.load_media = load_media;
 
 			params.expected_content = std::move(content);
 			params.expected_content_type = std::move(content_type);
 			params.domain = "www."+std::move(domain);
 			params.path = path;
+			
 
 			result res = ping.pingV2(params);
 
@@ -146,8 +166,11 @@ private:
 			ConnectionPool::connectionPool.edict("UPDATE servers SET status = '{}', last_ping = '{}' WHERE id = {}", 
 				to_string(res.status), curDateInString(), id);
 			
-			if (res.status == pingStatus::unavailable and (prevState=="up" or prevState=="unstable")) {
-				downServersQueue::queue.push(downInfo(std::stoi(id), domain));
+			if (res.status != pingStatus::ok) {
+				auto req = ConnectionPool::connectionPool.request("SELECT * FROM logs where server_id = {} and date_time = '{}'",
+					id, ans[0]["last_ping"].as<std::string>());
+				if(req.size()>0)
+				if(req[0]["status"].as<std::string>()=="up") downServersQueue::queue.push(downInfo(std::stoi(id), domain));
 			}
 
 

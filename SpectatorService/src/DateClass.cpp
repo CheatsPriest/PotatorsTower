@@ -12,11 +12,10 @@ std::string curDateInString(const std::string& format) {
 }
 
 std::string curDateInStringWithOffset(const long long seconds, const std::string& format) {
-    // Преобразуем long long в time_t
     time_t raw_time = std::time(nullptr);
-    raw_time -= static_cast<time_t>(seconds); // Явное преобразование типа
+    raw_time -= static_cast<time_t>(seconds);
     
-    auto tm = *std::localtime(&raw_time); // Передаем указатель на time_t
+    auto tm = *std::localtime(&raw_time);
     std::stringstream buf;
     buf << std::put_time(&tm, format.c_str());
     return buf.str();

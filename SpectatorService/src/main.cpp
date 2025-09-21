@@ -2,6 +2,7 @@
 
 
 #include "SQLManager.h"
+#include "MediaLoadTimer.h"
 
 void req() {
     for (int i = 0; i < 30; i++) {
@@ -13,25 +14,48 @@ void req() {
 int main()
 {
 
-    
-    // Create an SSL client instance for the target server
-    
+    //std::string url = "https://www.catslove.com/en/10-most-popular-cat-breeds";
+
+    //// Загружаем основную страницу
+    //httplib::SSLClient cli("www.catslove.com", 443);
+    //
+    //cli.set_connection_timeout(1);
+    //cli.set_read_timeout(1);
 
 
+    //auto response = cli.Get("/en/10-most-popular-cat-breeds");
 
+    /*if (response && response->status == 200) {
+       
+        
 
-    
-    /*Pinger p;
-    request_params param;
-    
-    param.domain = "www.forum.old-dos.ru";
-    param.expected_content_type = "text/html";
-    param.expected_content = "meta";
-    param.use_https = 0;
+        MediaLoadTimer timer(url);
 
-    auto ans = p.pingV2(param);
-    std::cout << ans.delay << " " << ans.delay << " " << ans.error_message<<" "<< to_string(ans.status) << std::endl;
-   */
+        std::cout << timer.measure_total_load_time(response->body) << std::endl;
+    }
+    else {
+        std::cout << " Failed to load main page" << std::endl;
+        if (!response) {
+            std::cout << "Error: " << httplib::to_string(response.error()) << std::endl;
+        }
+        else {
+            std::cout << "HTTP Status: " << response->status << std::endl;
+        }
+    }*/
+
+    ////https://www.catslove.com/en/10-most-popular-cat-breeds
+    //Pinger p;
+    //request_params param;
+    //
+    //param.domain = "www.google.com";
+    //param.expected_content_type = "text/html";
+    //param.expected_content = "meta";
+    //param.use_https = 1;
+    //param.load_media = true;
+
+    //auto ans = p.pingV2(param);
+    //std::cout << ans.delay << " " << ans.delay << " " << ans.error_message<<" "<< to_string(ans.status) << std::endl;
+   
 
     try
     {
@@ -84,6 +108,8 @@ int main()
     {
         std::cerr << e.what() << std::endl;
     }
+
+    
 
     std::cout << "All thread succesfully closed" << std::endl;
     system("pause");

@@ -25,6 +25,14 @@ public:
 	static std::atomic<size_t> amountOfMiddlePriority;
 	static std::atomic<size_t> amountOfHighPriority;
 	static std::atomic<size_t> amountOfExtreamePriority;
+
+	static std::atomic<bool> updates[5];
+	static std::atomic<long long> updatePeriodMass[5];
+
+	static std::atomic<bool> updatingLow;
+	static std::atomic<bool> updatingMiddle;
+	static std::atomic<bool> updatingHigh;
+	static std::atomic<bool> updatingExtreame;
 		
 	static std::atomic<long long> lastUpdate;
 	static std::atomic<int> threadsForPings;

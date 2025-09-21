@@ -20,12 +20,17 @@ namespace sqladd {
 		Pinger ping;
 		ping.numAttempts=20;
 		ping.goodLimit = 10;
+		request_params params;
+		params.domain = domain;
+		params.timeout_sec = 2;
+		params.use_https = false;
+		auto res = ping.pingV2(params);
 
-		auto res = ping.ping(domain, 10);
+		std::string finalString = "INSERT INTO servers (endpoint, delay, status, last_ping, priority, cheack_ssl, is_https, path, load_media) VALUES ('{}', {}, '{}', '{}', {}, '{}', '{}', '{}', '{}')";
+		try{ ConnectionPool::connectionPool.edict(finalString, domain, res.delay.count(), to_string(res.status), curDateInString(), 2, false, false, "/", false); }
+		catch (...) {
 
-		std::string finalString = "INSERT INTO servers (endpoint, delay, status, last_ping) VALUES ('{}', '{}', '{}', '{}')";
-		
-		ConnectionPool::connectionPool.edict(finalString, domain, res.delay.count(), to_string(res.status), curDateInString());
+		}
 	}
 	static void addManyAddressesByCin() {
 		std::string buf="";

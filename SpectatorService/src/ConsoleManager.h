@@ -39,9 +39,8 @@ public:
 
 			while (!messeages.empty()) {
 
-				if (!outBlocked)out << messeages.pop() << std::endl;
-				else std::this_thread::sleep_for(std::chrono::milliseconds(200));
-
+				out << messeages.pop() << std::endl;
+				
 			}
 		}
 	}
@@ -51,6 +50,7 @@ public:
 			command.clear();
 			//std::getline(in, command);
 			in >> command;
+			std::unique_lock<std::mutex> locker(in_mut);
 			outBlocked = true;
 			if (command == "0" or command == "exit") {
 				Controller::quite = true;
@@ -66,7 +66,13 @@ public:
 			else if (command == "set") {
 				outBlocked = true;
 				in >> command;
-
+				if (command == "period") {
+					in >> command;
+					int ind = std::stoi(command);
+					in >> command;
+					Controller::updatePeriodMass[ind] = std::stoi(command);
+					std::cout<<Controller::updatePeriodMass[ind] << std::endl;
+				}
 
 				outBlocked = false;
 			}

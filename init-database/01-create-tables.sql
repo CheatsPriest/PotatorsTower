@@ -3,16 +3,16 @@ CREATE TYPE server_state AS ENUM ('up', 'down', 'unstable', 'content_mismatch');
 CREATE TABLE servers (
     id BIGSERIAL PRIMARY KEY,
     endpoint TEXT NOT NULL,
-    status server_state,
-    last_ping TIMESTAMP,
-    delay REAL,
+    status server_state NOT NULL,
+    last_ping TIMESTAMP NOT NULL,
+    delay REAL NOT NULL,
     content TEXT,
     content_type TEXT,
     priority SMALLINT,
-    cheack_ssl BOOLEAN,
-    is_https BOOLEAN,
-    path TEXT,
-    load_media BOOLEAN
+    cheack_ssl BOOLEAN NOT NULL,
+    is_https BOOLEAN NOT NULL,
+    path TEXT NOT NULL,
+    load_media BOOLEAN NOT NULL
 );
 
 CREATE TABLE users (

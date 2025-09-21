@@ -15,3 +15,12 @@ std::atomic<size_t> Controller::amountOfLowPriority = 0;
 std::atomic<size_t> Controller::amountOfMiddlePriority = 0;
 std::atomic<size_t> Controller::amountOfHighPriority = 0;
 std::atomic<size_t> Controller::amountOfExtreamePriority = 0;
+
+std::atomic<bool> Controller::updatingLow{ 0 };
+std::atomic<bool> Controller::updatingMiddle{ 0 };
+std::atomic<bool> Controller::updatingHigh{ 0 };
+std::atomic<bool> Controller::updatingExtreame{ 0 };
+
+std::atomic<bool> Controller::updates[5] = { false, false, false, false, false };
+std::atomic<long long> Controller::updatePeriodMass[5] = { 300, 300, 120, 60, 30 };
+
