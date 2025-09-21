@@ -9,7 +9,7 @@ include(FetchContent)
 FetchContent_Declare(
     httplib
     GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
-    GIT_TAG        v0.12.1  # Use a specific version
+    GIT_TAG        v0.12.1
 )
 FetchContent_MakeAvailable(httplib)
 
@@ -36,7 +36,6 @@ protobuf_generate(
 
 add_executable(
     spectator_service
-    # src/a.cpp
     src/main.cpp
     src/ConnectionPool.cpp
     src/ConsoleManager.cpp

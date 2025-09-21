@@ -8,15 +8,25 @@ services:
       - POSTGRES_DB=PingTowerBase
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=4230
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-database/:/docker-entrypoint-initdb.d/
     ports:
       - "5430:5432"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d PingTowerBase"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
   spectator:
     build: ./SpectatorService
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
@@ -25,6 +35,9 @@ services:
       - POSTGRES_PASSWORD=4230
     networks:
       - app-network
+
+volumes:
+  postgres_data:
 
 networks:
   app-network:
