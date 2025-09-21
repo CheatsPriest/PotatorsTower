@@ -26,6 +26,10 @@ RUN wget https://github.com/jtv/libpqxx/archive/refs/tags/7.10.0.tar.gz \
     && cmake .. -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     && make -j$(nproc) install
 
+RUN apt install -y \
+    libssl-dev \
+    libbrotli-dev
+
 ADD . /app
 
 WORKDIR /app/build
@@ -36,7 +40,9 @@ RUN cmake .. && \
 FROM ubuntu:latest
 
 RUN apt update \
-    && apt install -y libpq5
+    && apt install -y \
+    libpq5 \
+    libbrotli1
 
 WORKDIR /app
 

@@ -5,14 +5,27 @@ services:
     image: postgres:latest
     container_name: postgres_container
     environment:
-      - POSTGRES_DB=mydb
+      - POSTGRES_DB=PingTowerBase
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-    ports:
-      - "5432:5432"
-  spectator:
-    build: SpectatorServices
-    depends_on:
-      - postgres
+      - POSTGRES_PASSWORD=4230
     ports:
       - "5430:5432"
+    networks:
+      - app-network
+
+  spectator:
+    build: ./SpectatorService
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=PingTowerBase
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=4230
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
