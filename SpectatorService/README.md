@@ -1,4 +1,0 @@
-# Spectator Service
-### Building
-
-### Deploing
